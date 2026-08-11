@@ -1,0 +1,49 @@
+name: Container Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["*"]
+  workflow_dispatch:
+
+env:
+  REGISTRY: quay.io
+  REGISTRY_PROJECT: light-castle
+  IMAGE_NAME: faire-cuan
+
+jobs:
+  build:
+    name: Build and Push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine image tag
+        id: tag
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "tag=latest ${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "Invalid Github ref_name: ${{ github.ref_name }}"
+            echo "This pipeline only works for the 'main' branch or for Git tags."
+            exit 1
+          fi
+
+      - name: Build image
+        id: build
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.REGISTRY_PROJECT }}/${{ env.IMAGE_NAME }}
+          tags: ${{ steps.tag.outputs.tag }}
+          containerfiles: ./Dockerfile
+
+      - name: Push to registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build.outputs.image }}
+          tags: ${{ steps.build.outputs.tags }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.CONTAINER_REGISTRY_USER }}
+          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
