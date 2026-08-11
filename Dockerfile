@@ -7,20 +7,17 @@ WORKDIR /build
 COPY pyproject.toml .
 COPY src/ src/
 
-RUN chown -R 1001:0 /build
+RUN mkdir /venv && chown -R 1001:0 /build /venv
 USER 1001
 
-RUN pip install --no-cache-dir build \
- && python -m build --wheel --outdir /build/dist
+RUN python3.12 -m venv /venv && \
+    /venv/bin/pip install . --no-deps --no-cache-dir
 
 # Stage 2: runtime image with OCI tools
 FROM quay.io/konflux-ci/task-runner:2.0.0@sha256:4b01fbf98fa7155f5c21443c285f88853864ae7cc66981cf6b543fc6ba16b81b
 
-WORKDIR /opt/faire-cuan
+COPY --from=builder /venv /venv
 
-COPY --from=builder /build/dist/*.whl /tmp/
+USER taskuser
 
-RUN pip install --no-cache-dir /tmp/*.whl \
- && rm -rf /tmp/*.whl
-
-ENTRYPOINT ["faire-cuan"]
+ENTRYPOINT ["/venv/bin/faire-cuan"]
