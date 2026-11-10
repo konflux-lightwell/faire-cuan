@@ -29,7 +29,7 @@ spec:
     - name: IMPORTER_IMAGE
       description: Container image used to run the verify, mirror, and results steps.
       type: string
-      default: quay.io/light-castle/oci-artifact-importer@sha256:3f73401d78377ac3028c44a5437208f5551fe31d3d2eb8467559e3a5021fdf21
+      default: quay.io/light-factory/faire-cuan:latest@sha256:18f50ca0267d8984aacd84b4721778d37ba9a51f1e2c17ff1f1fe38a5bb21a69
     - name: ociStorage
       description: >-
         OCI reference for the source trusted artifact. Use a distinct tag suffix
