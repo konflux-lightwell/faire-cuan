@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "automerge": false,
+  "enabledManagers": [
+    "custom.regex"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^tekton/tasks/.*\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "default: (?<depName>quay\\.io/light-factory/[a-z0-9-]+):(?<currentValue>latest)@(?<currentDigest>sha256:[a-f0-9]{64})"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "quay.io/light-factory/faire-cuan"
+      ],
+      "pinDigests": true,
+      "automerge": false,
+      "groupName": "faire-cuan task images"
+    }
+  ]
+}
