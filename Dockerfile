@@ -1,5 +1,5 @@
 # Stage 1: build the wheel
-FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:3f3c6dda26caa5b2200fba25721c7a970b1acd4677bbc9865bf25dce62da918a as builder
+FROM registry.access.redhat.com/ubi10/python-312-minimal@sha256:7039183fe52b41759b1780edaba0edd7d665c7db500893332a39f7f486806d71 as builder
 
 USER 0
 WORKDIR /build
